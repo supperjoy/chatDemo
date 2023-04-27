@@ -1,18 +1,40 @@
 <footer>
   <p mt-8 text-xs op-30>
-    <span pr-1>Made by</span>
-    <a
-      b-slate-link
-      href="https://supperjoy.online" target="_blank"
-    >
-      Supper
-    </a>
+    <span pr-1>当前用户：</span>
+    <span b-slate-link id="username">Supper</span>
     <span px-1>|</span>
-    <a
-      b-slate-link
-      href="https://supperjoy.online" target="_blank"
-    >
-      Source Code
-    </a>
+    <span b-slate-link class="logout" id="logout">退出登录</span>
   </p>
 </footer>
+
+<style>
+  .logout{
+    cursor: pointer;
+  }
+</style>
+
+<script>
+import axios from "axios"
+
+
+const logoutSpan = document.getElementById("logout");
+const usernameSpan = document.getElementById("username");
+usernameSpan.innerText = localStorage.getItem("userInfo") ? JSON.parse(localStorage.getItem("userInfo")).username : "未登录";
+
+logoutSpan.onclick = logout;
+
+function logout(){
+  axios({
+    method:"get",
+    url:"https://test.supperjoy.online/common/logout",
+    withCredentials:true
+  }).then((res)=>{
+    console.log(res)
+    if(res.data.code == 200){
+      localStorage.removeItem("userInfo")
+      window.location.href = "/password"
+    }
+  })
+}
+  
+</script>

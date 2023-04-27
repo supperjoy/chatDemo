@@ -1,6 +1,6 @@
 ---
-import Logo from './Logo.astro'
-import Themetoggle from './Themetoggle.astro'
+import Logo from "./Logo.astro";
+import Themetoggle from "./Themetoggle.astro";
 ---
 
 <header>
@@ -13,4 +13,23 @@ import Themetoggle from './Themetoggle.astro'
     <span class="gpt-subtitle">Supper</span>
   </div>
   <p mt-1 op-60>Based on OpenAI API (gpt-3.5-turbo).</p>
+  <div class="fb items-center">
+    <p mt-1 op-60>您的剩余时长：<span id="expire">已过期</span></p>
+    <a href="/pay" class="ml-14 op-60" id="recharge">充值时长</a>
+  </div>
 </header>
+
+<script>
+  import axios from "axios";
+  import requests from '../pages/api/request'
+  const expireSpan = document.getElementById("expire");
+  
+  console.log(123456);
+  axios({
+    method: "get",
+    url: "https://test.supperjoy.online/user/getexpire",
+    withCredentials: true,
+  }).then((res) => {
+    expireSpan.innerText = res.data.data;
+  });
+</script>

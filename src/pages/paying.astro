@@ -1,0 +1,131 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Password Protection">
+  <div>
+    <div class="box">
+      <div class="code">
+        <img
+          src="https://supperjoy-1311200541.cos.ap-chengdu.myqcloud.com/%E5%95%86%E5%93%81.png"
+          alt=""
+          id="codeImg"
+        />
+      </div>
+      <div class="info">
+        <ul style="font-size:14px">
+          <li>
+            <span>商品名称:</span><span
+              style="font-weight: 700;font-size:14px;margin-left:10px;margin-top:10px"
+              id="productName">---</span
+            >
+          </li>
+          <li>
+            <span>订单ID:</span><span
+              style="font-weight: 700;font-size:14px;margin-left:10px;margin-top:10px"
+              id="orderID">---</span
+            >
+          </li>
+          <li>
+            <span>创建时间:</span><span
+              id="createTime"
+              style="font-weight: 700;font-size:14px;margin-left:10px;"
+              >---</span
+            >
+          </li>
+        </ul>
+      </div>
+      <div class="attention">二维码有效期5分钟，请尽快完成支付</div>
+      <div class="forPhone">
+        <a href="#" id="forPhone">手机用户点击跳转支付宝支付</a>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .box {
+    width: 300px;
+    height: 400px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 10px;
+  }
+  .code {
+    display: flex;
+    justify-content: center;
+  }
+  .code img {
+    width: 250px;
+    height: 250px;
+  }
+  .info {
+    /* margin-top: 10px; */
+  }
+  .forPhone {
+    margin-top: 5px;
+    text-align: center;
+    font-size: 12px;
+    color: #4a576a;
+  }
+  .attention {
+    margin-top: 25px;
+    font-size: 12px;
+    color: #4a576a;
+    text-align: center;
+  }
+</style>
+
+<script>
+  import axios from "axios";
+
+  const searchParams = new URLSearchParams(window.location.search);
+  const commodityId = searchParams.get("commodityId"); // 'admin'
+  const codeImg = document.getElementById("codeImg");
+  const productNameDiv = document.getElementById("productName");
+  const createTimeDiv = document.getElementById("createTime");
+  const orderID = document.getElementById("orderID");
+  const forPhone = document.getElementById("forPhone");
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  console.log(userInfo);
+  console.log(commodityId);
+
+
+
+  axios({
+    method: "get",
+    url: "https://test.supperjoy.online/user/getCode",
+    withCredentials: true,
+    params: {
+      commodityId,
+    },
+  }).then((res) => {
+    if (res.data.code == 200) {
+      codeImg.src = res.data.data.imgCode;
+      productNameDiv.innerText = res.data.data.productName;
+      createTimeDiv.innerText = res.data.data.createTime;
+      orderID.innerText = res.data.data.orderId;
+      forPhone.href = res.data.data.url;
+    let data = {
+        commodityId,
+        orderId:res.data.data.orderId,
+        username:userInfo.username
+    }
+      axios({
+        method: "post",
+        url: "https://test.supperjoy.online/order/query",
+        data,
+        withCredentials:true
+      }).then(()=>{
+        alert("支付成功")
+        window.location.href = "/"
+      })
+
+    }
+  });
+</script>
